@@ -1,0 +1,53 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:platform_identity/platform_identity.dart';
+
+class GoogleServicesConstance {
+  static String? sharedKey;
+  static String? androidKey;
+  static String? iosKey;
+  static bool useStrictHeaders = false;
+  static Map<String, String> headers = {};
+
+  static Future<void> setHeaders() async {
+    if (sharedKey == null && androidKey == null && iosKey == null) {
+      throw Exception("No key provided");
+    }
+    headers = {"X-Goog-FieldMask": "*"};
+    if (kIsWeb) {
+      headers.addAll({"X-Goog-Key": sharedKey!});
+      return;
+    }
+    if (TargetPlatform.android == defaultTargetPlatform) {
+      String key = (androidKey ?? sharedKey)!;
+      headers.addAll({
+        "X-Goog-Api-Key": key,
+        if (useStrictHeaders) ...{
+          "X-Android-Package": PlatformIdentity.getPackageName(),
+          "X-Android-Cert": base64ToHex(PlatformIdentity.getSha1()),
+        },
+      });
+      return;
+    }
+    if (TargetPlatform.iOS == defaultTargetPlatform) {
+      String key = (iosKey ?? sharedKey)!;
+      headers.addAll({
+        "X-Goog-Api-Key": key,
+        if (useStrictHeaders) ...{
+          "X-Ios-Bundle-Identifier": PlatformIdentity.getPackageName(),
+        },
+      });
+      return;
+    }
+    if (kIsWeb) {
+      headers.addAll({"X-Goog-Api-Key": sharedKey!});
+    }
+  }
+
+  static String base64ToHex(String base64String) {
+    Uint8List bytes = base64Decode(base64String);
+
+    return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+  }
+}

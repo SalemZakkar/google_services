@@ -1,0 +1,14 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'place_auto_complete_params_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Map<String, dynamic> _$PlaceAutoCompleteParamsModelToJson(
+  PlaceAutoCompleteParamsModel instance,
+) => <String, dynamic>{
+  'input': instance.input,
+  'locationBias': instance.locationBias,
+};

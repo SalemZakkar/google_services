@@ -1,0 +1,10 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_services/core/presentation/cubit/base_state.dart';
+import 'package:google_services/places/domain/entity/place_auto_complete_result.dart';
+import 'package:injectable/injectable.dart';
+
+@injectable
+class PlacesAutoCompleteCubit
+    extends Cubit<BaseState<List<PlaceAutoCompleteResult>>> {
+  PlacesAutoCompleteCubit() : super(BaseState());
+}

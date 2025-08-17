@@ -1,0 +1,45 @@
+import 'package:dio/dio.dart';
+import 'package:google_services/core/data/utils/auth_interceptor.dart';
+import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
+
+import 'core/data/utils/unifi_logger.dart';
+
+@module
+abstract class InjectableModule {
+  @lazySingleton
+  Dio get dioInstance {
+    final dio = Dio(
+      BaseOptions(
+        headers: {'Accept': '*/*'},
+        validateStatus: (statusCode) {
+          if (statusCode != null) {
+            if (200 <= statusCode && statusCode < 300) {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        },
+      ),
+    );
+    dio.interceptors.addAll([
+      AuthInterceptor(),
+      UnifiInterceptor(
+        requestBody: true,
+        requestHeader: true,
+        responseBody: true,
+        responseHeader: true,
+        request: true,
+        // usePrint: true,
+      ),
+    ]);
+
+    return dio;
+  }
+
+  @lazySingleton
+  Logger get logger => Logger();
+}
